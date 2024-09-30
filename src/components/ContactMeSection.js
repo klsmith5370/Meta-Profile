@@ -22,10 +22,36 @@ const LandingSection = () => {
   const { onOpen } = useAlertContext();
 
   const formik = useFormik({
-    initialValues: {},
-    onSubmit: (values) => {},
-    validationSchema: Yup.object({}),
+    initialValues: {
+      firstName: "",
+      email: "",
+      type: "hireMe",
+      comment: "",
+    },
+    onSubmit: async (values, { resetForm }) => {
+      const res = await submit(values);
+      if (res.type === "success") {
+        onOpen({
+          title: "Success",
+          description: `Thank you, ${values.firstName}! Your message has been sent.`,
+          status: "success",
+        });
+      } else {
+        onOpen({
+          title: "Error",
+          description: res.message || "Something went wrong, please try again.",
+          status: "error"
+        });
+      }
+    },
+    validationSchema: Yup.object({
+      firstName: Yup.string().required("Name is required"),
+      email: Yup.string().email("Invalid email format").required("Email is required"),
+      comment: Yup.string().required("Message is required"),
+    }),
   });
+
+  useEffect()
 
   return (
     <FullScreenSection

@@ -6,15 +6,15 @@ import React from "react";
 const Card = ({ title, description, imageSrc }) => {
   return (
     <HStack
-      bg="black"
+      bg="white"
       borderRadius="md"
       boxShadow="md"
       p={4}
       spacing={4}
       align="center"
       role="group"
-      _hover={{ boxShadow: "lg", transform: "scale(1.02)" }}
-      transition="all 0.2s ease-in-out"
+      // _hover={{ boxShadow: "lg", transform: "scale(1.02)" }}
+      // transition="all 0.2s ease-in-out"
     >
 
     <VStack>
@@ -25,9 +25,9 @@ const Card = ({ title, description, imageSrc }) => {
       />
 
       
-        <Heading size="md" noOfLines={1}>{title}</Heading>
-        <Text fontSize="md" noOfLines={2}>{description}</Text>
-        <p>See More <FontAwesomeIcon icon={faArrowRight} size="1x" /></p>
+        <Heading size="md" color="black" noOfLines={1}>{title}</Heading>
+        <Text fontSize="md" color="black" noOfLines={2}>{description}</Text>
+        <Text color="black">See More <FontAwesomeIcon icon={faArrowRight} color="black" size="1x" /></Text>
       </VStack>
 
       
