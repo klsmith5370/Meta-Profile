@@ -25,29 +25,22 @@ const LandingSection = () => {
     initialValues: {
       firstName: "",
       email: "",
-      type: "hireMe",
+      type: "",
       comment: "",
     },
     onSubmit: async (values, { resetForm }) => {
-      const res = await submit(values);
-      if (res.type === "success") {
-        onOpen({
-          title: "Success",
-          description: `Thank you, ${values.firstName}! Your message has been sent.`,
-          status: "success",
-        });
+      await submit("/api/submit", values);
+      if (response?.type === "success") {
+        onOpen("success", response.message);
         resetForm();
-      } else {
-        onOpen({
-          title: "Error",
-          description: res.message || "Something went wrong, please try again.",
-          status: "error"
-        });
+      } else if (response?.type === "error") {
+        onOpen("error", response.message);
       }
     },
     validationSchema: Yup.object({
       firstName: Yup.string().required("Name is required"),
       email: Yup.string().email("Invalid email format").required("Email is required"),
+      type: Yup.string().required('Type of enquiry is required'),
       comment: Yup.string().required("Message is required"),
     }),
   });
@@ -55,20 +48,13 @@ const LandingSection = () => {
   useEffect(() => {
     if (response) {
       if (response.type === "success") {
-        onOpen({
-          title: "Success",
-          description: `Thank you, ${formik.values.firstName}! Your message has been sent.`,
-          status: "success",
-        });
-      } else if (response.type === "error") {
-        onOpen({
-          title: "Error",
-          description: response.message || "Something went wrong, please try again.",
-          status: "error",
-        });
+        onOpen("success", response.message);
+        formik.resetForm();
+      } else {
+        onOpen("error", response.message);
       }
     }
-  }, [response, onOpen, formik.values.firstName]);
+  }, [response, onOpen, formik]);
 
   return (
     <FullScreenSection
@@ -89,9 +75,7 @@ const LandingSection = () => {
                 <Input
                   id="firstName"
                   name="firstName"
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  value={formik.values.firstName}
+                  {...formik.getFieldProps("firstName")}
                 />
                 <FormErrorMessage>{formik.errors.firstName}</FormErrorMessage>
               </FormControl>
@@ -101,21 +85,18 @@ const LandingSection = () => {
                   id="email"
                   name="email"
                   type="email"
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  value={formik.values.email}
+                  {...formik.getFieldProps("email")}
                 />
                 <FormErrorMessage>{formik.errors.email}</FormErrorMessage>
               </FormControl>
-              <FormControl>
+              <FormControl isInvalid={formik.touched.type && !!formik.errors.type}>
                 <FormLabel htmlFor="type">Type of enquiry</FormLabel>
                 <Select 
                   id="type" 
                   name="type"
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  value={formik.values.type}
+                  {...formik.getFieldProps("type")}
                 >
+                  <option value="">Select an option</option>
                   <option value="hireMe">Freelance project proposal</option>
                   <option value="openSource">
                     Open source consultancy session
@@ -129,9 +110,7 @@ const LandingSection = () => {
                   id="comment"
                   name="comment"
                   height={250}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  value={formik.values.comment}
+                  {...formik.getFieldProps("comment")}
                 />
                 <FormErrorMessage>{formik.errors.comment}</FormErrorMessage>
               </FormControl>
